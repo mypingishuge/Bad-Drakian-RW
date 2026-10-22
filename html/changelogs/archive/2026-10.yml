@@ -562,3 +562,7 @@
   - bugfix: Saigas and fogbeasts now register their damage-triggered dismount handler
       properly when ridden, allowing hits to the mount to throw off eligible riders
       using Run intent. Fogbeast riders with Master Riding or higher remain protected.
+  - rscadd: Added Orgasm Denier, a 0-point quirk with a toggle that can deny a partner's
+      climax during paired ERP actions if they have Enable Edging Content enabled.
+  - rscadd: Denial resets arousal to 30 and gives a non-stacking, five-minute frustration
+      mood. A successful climax clears it.
