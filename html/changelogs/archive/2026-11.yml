@@ -210,3 +210,34 @@
   - bugfix: Fullscreen pain visuals and shove grip-break checks use current pain tolerance,
       and fractional pain percentages no longer hide the heart pain indicator.
   - bugfix: Gronn's Battle Cry now also improves the periodic pain-collapse roll.
+  - balance: Reduced Disgraced Noble to 0 QP; Gossiper, Pretty and Raw Diet to 1 QP;
+      Dream Dust to 2 QP.
+  - balance: Nobility now costs 4 Triumphs; Bronze Golem, Scrappy Survivor and Man
+      in The Pub cost 6; Traveling Scholar costs 8. All virtues previously costing
+      5 Triumphs now cost 4, and those costing 3 now cost 2.
+  - rscadd: Added Gods and Lands encyclopedia guides with religious lore, regional
+      lore, origin traits and language bonuses.
+  - spellcheck: Corrected Ascendants in the faith selection menu.
+2026-11-07:
+  Chlorotrifluoride:
+  - image: Removed the built in fluff of harpy(alt1) and harpy(bat) wings.
+  GarrusVakarian:
+  - map: fixes the Smollhill chapel to allow sermons to be held inside.
+  mypingishuge:
+  - rscadd: Players with 5 PQ or below receive a Getting Started encyclopedia link
+      10 seconds after character setup, with a LOOC notification sound.
+  - rscadd: Selecting a character origin now explains its regional traits and their
+      effects in chat.
+  - rscadd: Adventurer and refugee spawn routes warn players below 5 PQ, except northwest.
+      Try the same portal again to proceed anyway; pulled companions can travel with
+      their escort.
+  - balance: Druid requires 1 PQ on Neuhill and Smollhill.
+  - spellcheck: Renamed the North-Western path to Rockhill to Northwestern path to
+      Rockhill.
+  - bugfix: Blocked throws between z-levels now explain that the target must be tackled
+      down first, preserve the grab and cancel throw mode and looking upstairs.
+  - spellcheck: Giant's effects explanation now mentions that it can throw non-Giant
+      characters without an aggressive grab.
+  - rscadd: (WeNeedMorePhoron) Clearing a blockade or completing hoard recovery grants
+      1 Triumph to its fellowship and living players within 15 tiles of the coin recipient,
+      with an explanatory chat message. Each account is rewarded once per writ.
