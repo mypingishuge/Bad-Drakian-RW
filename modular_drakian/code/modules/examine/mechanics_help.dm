@@ -667,3 +667,7 @@
 	if(head_cosmetic)
 		return span_info("This can be inserted into compatible headwear as a decorative layer. Shift-right-click that headwear while holding or wearing it to open its cosmetic storage.")
 	return span_info("This can be inserted into compatible armor as a decorative layer. Shift-right-click that armor while holding or wearing it to open its cosmetic storage.")
+
+/obj/structure/flora/roguegrass/herb/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Left-click empty-handed to pick herbs for alchemy.")
