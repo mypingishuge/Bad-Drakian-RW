@@ -83,7 +83,7 @@
 
 /obj/item/storage/keyring/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use a keyring containing the right key to unlock a door. Right-click the door to lock it.")
+	. += span_info("Right-click a door to lock or unlock it with a matching key on this ring. The ring can stay in your hand, on your belt or inside a worn belt.")
 	. += span_info("Right-click the keyring to take a key or open its storage to choose one.")
 
 /obj/item/lockpickring/get_mechanics_examine(mob/user)
@@ -92,7 +92,7 @@
 
 /obj/item/roguekey/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use a matching key to unlock a door. Right-click the door with it to lock it.")
+	. += span_info("Right-click a door to lock or unlock it with this key in hand or on your belt, including inside a worn belt or keyring.")
 
 /obj/item/lockpick/get_mechanics_examine(mob/user)
 	. = ..()
@@ -235,7 +235,7 @@
 
 /obj/structure/mineral_door/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use a matching key or keyring to unlock the door and right-click with it to lock it.")
+	. += span_info("Right-click to lock or unlock with a matching key in hand or at your belt, including keys stored inside a worn belt or keyring.")
 	. += span_info("Kick an unlocked door to open it. Pick, force or destroy locked doors.")
 	if(repairable)
 		var/obj/cast_repair_cost_first = repair_cost_first
@@ -741,11 +741,12 @@
 
 /obj/item/rogue/instrument/get_mechanics_examine(mob/user)
 	. = ..()
-	if (ishuman(user))
+	. += span_info("Use in hand to open the music menu, then choose Play Song. Use it again to stop playing.")
+	. += span_info("In combat mode, using it replays your last song.")
+	if(ishuman(user))
 		var/mob/living/carbon/human/viewer_human = user
-		if (viewer_human.inspiration)
+		if(viewer_human.inspiration)
 			. += span_info("You can quickly add and remove people from your audience by <b>middle-clicking</b> on them with this instrument in your hand.")
-			. += span_info("If you try to play with combat mode active, you'll automatically play your last song.")
 
 /obj/item/magic/infernal/get_mechanics_examine(mob/user)
 	. = ..()
@@ -970,7 +971,11 @@
 
 /obj/structure/pillory/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Click with a held liquid container outside combat mode to set it at the base.")
+	. += span_info("Drag yourself or another person onto the unlocked pillory to buckle them in.")
+	. += span_info("Right-click empty-handed to latch or unlatch an occupied, unlocked pillory.")
+	. += span_info("Use a matching key or keyring on the latched pillory to lock or unlock it.")
+	. += span_info("Resist to struggle free. At 18 Strength, you can break it open even while locked.")
+	. += span_info("Click with a held liquid container to set it at the base.")
 
 /obj/item/capture_sack/get_mechanics_examine(mob/user)
 	. = ..()
@@ -1063,3 +1068,7 @@
 	. += span_info("RMB. MMB. Huh. Must be the initials of two brothers or something.")
 	. += span_info("Leaflet, in smaller print: should the skull upon the shoulders be none of its own, this mends no body but takes one, unmaking whoever it was to clothe another soul in it. It drinks the tank dry, no hand below a master physician's should attempt it, and the artificers accept no blame for what the Undermaiden's faithful will name sacrilege.")
 	. += span_info("Someone has scratched a reply beneath it in a cramped hand, the ink a sickly green: <i><font color='#8ea63a'>'PESTRAN HERE. As much as I enjoy worms, flesh left to rot serves nobody, and turning away a soul you had the means to seat is the greater sin by far.'</font></i>")
+
+/obj/item/storage/belt/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click a door to lock or unlock it with a matching key stored in your worn belt, including keys on a keyring.")
