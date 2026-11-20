@@ -180,7 +180,7 @@
 	if(!length(lines))
 		return result
 	result = result.Copy()
-	result += "<details><summary><span class='smallnotice'>Mechanics</span></summary>[lines.Join("<br>")]</details>"
+	result += "<details class='examine-mechanics'><summary><span class='smallnotice'>Mechanics</span></summary>[lines.Join("<br>")]</details>"
 	return result
 
 /atom/proc/Initialize(mapload, ...)
