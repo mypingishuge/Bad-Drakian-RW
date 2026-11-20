@@ -27,7 +27,6 @@
 		. += span_info("There is some ready compost.")
 	if(show_dry && unflipped_compost >= COMPOST_PER_PRODUCED_ITEM)
 		. += span_warning("The compost requires flipping!")
-		. += span_notice("Flip it by right clicking it with an empty hand.")
 
 /obj/structure/composter/update_icon()
 	. = ..()

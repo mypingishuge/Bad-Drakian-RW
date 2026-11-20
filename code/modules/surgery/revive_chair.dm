@@ -161,11 +161,6 @@
 	. = ..()
 	. += span_info("Fluid level: [current_brew]/[max_brew] units")
 	. += span_info("Charge level: [charge]/[max_charge]")
-	. += span_info("Useful leaflet: Strap the departed into the seat and pour the elixir in, then charge it with the crank affixed on the right. Someone has etched 'RMB' into the handle.")
-	. += span_info("There's a big juicy lever in the middle on the backside that looks enticing to pull, and that is the one that does the waking. This one is etched 'MMB'.")
-	. += span_info("RMB. MMB. Huh. Must be the initials of two brothers or something.")
-	. += span_info("Leaflet, in smaller print: should the skull upon the shoulders be none of its own, this mends no body but takes one, unmaking whoever it was to clothe another soul in it. It drinks the tank dry, no hand below a master physician's should attempt it, and the artificers accept no blame for what the Undermaiden's faithful will name sacrilege.")
-	. += span_info("Someone has scratched a reply beneath it in a cramped hand, the ink a sickly green: <i><font color='#8ea63a'>'PESTRAN HERE. As much as I enjoy worms, flesh left to rot serves nobody, and turning away a soul you had the means to seat is the greater sin by far.'</font></i>")
 
 	if(current_brew > 0)
 		. += span_notice("The fluid tank contains a glowing green liquid.")

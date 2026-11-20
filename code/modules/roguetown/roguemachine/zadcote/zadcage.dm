@@ -189,7 +189,6 @@
 	var/datum/zadlink/link = resolve_link()
 	var/obj/item/roguemachine/zadcote/cote = resolve_cote()
 	if(!link || !cote)
-		. += span_info("This zadcage has no bond. Strike it against a zadcote to make one.")
 		return
 	if(link.severed)
 		. += span_warning("Bond severed. This zadcage was tied to [cote.name], slot [link.slot_index].")

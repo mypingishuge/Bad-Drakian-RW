@@ -642,8 +642,6 @@ GLOBAL_LIST_INIT(pridelist, list(
 
 	if(dye)
 		. += span_notice("It is currently lathering <font color=[dye]>paint</font>.")
-	else
-		. += span_notice("Use in active hand to pick a paint.")
 
 /obj/item/dye_brush/attack_self(mob/user)
 	..()

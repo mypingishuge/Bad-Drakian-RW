@@ -80,23 +80,6 @@
 	anvil_recipes_to_craft.Cut()
 	return ..()
 
-/obj/structure/autosmither/examine(mob/user)
-	. = ..()
-	var/next_step
-	if(!working)
-		next_step = pre_start_list[length(step_list) + 1]
-	else
-		next_step = post_start_list[length(step_list) + 1]
-
-	if (user.get_skill_level(/datum/skill/craft/engineering) > 3)
-		switch(next_step)
-			if(STEP_FIDDLE)
-				. += span_notice("To toggle the machine, fiddle with the dials")
-			if(STEP_BUTTON)
-				. += span_notice("To toggle the machine, push the buttons")
-			if(STEP_LEVER)
-				. += span_notice("To toggle the machine, pull the lever")
-
 /obj/structure/autosmither/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Left-click it with an empty hand to open its control interface and manage its crafting queue.")
@@ -106,6 +89,22 @@
 	. += span_info("Each recipe consumes its required materials as soon as that recipe starts.")
 	if(user.get_skill_level(/datum/skill/craft/engineering) > 3)
 		. += span_info("Skilled engineers can read the next required step from the machine's normal examine text.")
+	var/next_step
+	if(!working)
+		next_step = pre_start_list[length(step_list) + 1]
+	else
+		next_step = post_start_list[length(step_list) + 1]
+
+	if (user.get_skill_level(/datum/skill/craft/engineering) > 3)
+		switch(next_step)
+			if(STEP_FIDDLE)
+				. += span_info("To toggle the machine, fiddle with the dials")
+			if(STEP_BUTTON)
+				. += span_info("To toggle the machine, push the buttons")
+			if(STEP_LEVER)
+				. += span_info("To toggle the machine, pull the lever")
+
+
 
 /obj/structure/autosmither/ui_interact(mob/user, datum/tgui/ui)
 	if(isobserver(user)) // observers/ghosts shouldn't be able to open or peek at the machine UI

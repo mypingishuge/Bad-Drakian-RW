@@ -81,7 +81,6 @@ Reel teleports the attached atom to the grabbed turf.
 		. += span_warning("It's expended. It must be reloaded.")
 	else if(!is_loaded && grappled_turf && in_use)
 		. += span_warning("It's deployed. You can <b>ATTACH</b> a hook to an entity.")
-		. += span_info("I may activate this in my hand to reset.")
 	if(attached && grappled_turf && in_use && !is_loaded)
 		. += span_warning("It's ready to use. You may <b>REEL</b> in \the [attached].")
 

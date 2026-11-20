@@ -441,15 +441,3 @@
 		opacity = FALSE
 	update_icon()
 	..()
-
-
-/obj/structure/roguewindow/examine(mob/user)
-	. = ..()
-	var/obj/cast_repair_cost_first = repair_costs[1]
-	var/obj/cast_repair_cost_second = repair_costs[2]
-	if((!repair_started) && (obj_integrity < max_integrity))
-		. += span_notice("A [initial(cast_repair_cost_first.name)] can be used to repair it.")
-		if(brokenstate)
-			. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
-	if(repair_started)
-		. += span_notice("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")

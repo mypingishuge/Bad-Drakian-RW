@@ -179,8 +179,6 @@
 		var/obj/item/temp_item = required_item_type
 		var/required_item_name = initial(temp_item.name)
 		. += span_notice("It is attuned to [current_aspect_name] and requires [required_item_name] to fill.")
-	else if(!attuned)
-		. += span_notice("Use in-hand to attune this canister to an aspect.")
 	else if (filled)
 		. += span_notice("It is attuned to [current_aspect_name]")
 	ui_interact(user)

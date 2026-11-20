@@ -596,11 +596,6 @@
 		/datum/special_intent/flail_sweep,
 		)
 
-/obj/item/rogueweapon/sword/long/blacksteel/examine(mob/user)
-	. = ..()
-	if(!used)
-		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
-
 /obj/item/rogueweapon/sword/long/blacksteel/attack_right(mob/user)
 	. = ..()
 	if(used)
@@ -1930,11 +1925,6 @@
 		/datum/special_intent/piercing_lunge,
 		/datum/special_intent/polearm_backstep,
 		)
-
-/obj/item/rogueweapon/sword/rapier/blacksteel/examine(mob/user)
-	. = ..()
-	if(!used)
-		. += span_notice("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
 
 /obj/item/rogueweapon/sword/rapier/blacksteel/attack_right(mob/user)
 	. = ..()

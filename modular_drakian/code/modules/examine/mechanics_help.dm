@@ -173,6 +173,8 @@
 
 /obj/item/grown/log/tree/get_mechanics_examine(mob/user)
 	. = ..()
+	if(blessed)
+		. += span_info("Blessed timber has a big chance to yield 1 extra small log, and a smaller chance to yield 2 extra small logs when chopped.")
 	. += span_info("Split logs with an axe. Woodcutting improves the work.")
 	. += span_info("Use logs, smaller logs and sticks in crafting recipes.")
 
@@ -235,6 +237,15 @@
 	. = ..()
 	. += span_info("Use a matching key or keyring to unlock the door and right-click with it to lock it.")
 	. += span_info("Kick an unlocked door to open it. Pick, force or destroy locked doors.")
+	if(repairable)
+		var/obj/cast_repair_cost_first = repair_cost_first
+		var/obj/cast_repair_cost_second = repair_cost_second
+		if((repair_state == 0) && (obj_integrity < max_integrity))
+			. += span_info("A [initial(cast_repair_cost_first.name)] can be used to repair it.")
+			if(brokenstate)
+				. += span_info("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
+		if(repair_state == 1)
+			. += span_info("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
 
 /obj/structure/mineral_door/wood/deadbolt/get_mechanics_examine(mob/user)
 	. = ..()
@@ -424,7 +435,7 @@
 
 /obj/item/clothing/neck/roguetown/psicross/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Middle-click to change the amulet's wrist or neck display. Right-click to pray.")
+	. += span_info("Middle-click to adjust the amulet's wrist/neck display. Right-click to pray if you know how.")
 	. += span_info("Use *pray to write a spoken prayer.")
 
 /obj/item/clothing/neck/roguetown/psicross/silver/get_mechanics_examine(mob/user)
@@ -499,24 +510,28 @@
 
 /obj/structure/plough/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Pull while sneaking to till the ground and prepare farming plots. Tilling uses stamina.")
+	. += span_info("TILTS any dirt/grass tile it's dragged over - requires user to drag it while having SNEAK active.")
+	. += span_info("Tilling uses stamina.")
 
 /obj/item/rogueweapon/thresher/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use Strike intent on produce to extract seeds. Use Thresh on harvested stalks to separate grain and fibers.")
+	. += span_info("Use on STRIKE intent to break up produce for seeds. THRESH on stalks to beat out grains.")
+	. += span_info("Use Thresh on harvested stalks to separate fibers.")
 
 /obj/item/rogueweapon/hoe/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Use Till intent to prepare farming plots. Work planted plots to remove weeds.")
+	. += span_info("TILT intent allows you to make new plots for plants. Using it (on any intent) on a plot that already has something planted removes WEEDS.")
 
 /obj/item/rogueweapon/pitchfork/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Turn compost with the pitchfork. Use Scoop to gather stalks and unwield it to dump them.")
+	. += span_info("Use RIGHT CLICK to flip compost in the bin. While wielded SCOOP intent allows you to pick up large amount (19) stalks.")
+	. += span_info("Unwield it to dump the stalks.")
 
 /obj/item/paper/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Write with a feather or writing tool. Reading and writing require Literacy.")
-	. += span_info("Wrap items in paper to make packages. Combine written pages into manuscripts and books.")
+	. += span_info("Use a feather to write on it. You can create a two-page manuscript that can be turned into a book by writing on it and applying it to another piece of paper that also have something written on it.")
+	. += span_info("Reading and writing require Literacy.")
+	. += span_info("Wrap items in paper to make packages.")
 
 /obj/item/paper/inqslip/accusation/get_mechanics_examine(mob/user)
 	. = ..()
@@ -671,3 +686,380 @@
 /obj/structure/flora/roguegrass/herb/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Left-click empty-handed to pick herbs for alchemy.")
+
+/obj/item/toy/cards/deck/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Use the deck in your hand to shuffle the cards. Draw a card by clicking on it with an empty hand.")
+
+/obj/item/manuscript/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It has [number_of_pages] pages. Use paper to add more. Finish the book with a book crafting kit, then choose its title, category and cover before archiving it.")
+
+/obj/item/reagent_containers/glass/bottle/claybottle/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/reagent_containers/glass/bottle/clayvase/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/reagent_containers/glass/bottle/clayfancyvase/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/reagent_containers/glass/cup/claycup/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/roguestatue/clay/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Clay pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/roguestatue/glass/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Glassed pottery, unlike its alloyed counterparts, can be stained in a dyebin.")
+
+/obj/item/carvedgem/porcelain/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Porcelain pottery can be glazed with a dye brush.")
+
+/obj/item/reagent_containers/glass/cup/porcelain/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be brushed with a dye brush to glaze it.")
+
+/obj/item/reagent_containers/glass/bucket/pot/teapot/porcelain/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be brushed with a dye brush to glaze it.")
+
+/obj/item/reagent_containers/glass/bottle/blown/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Blown glass can be tinted in a dye bin.")
+
+/obj/item/reagent_containers/glass/bottle/alchemical/blown/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Blown glass can be tinted in a dye bin.")
+
+/obj/item/rogue/instrument/get_mechanics_examine(mob/user)
+	. = ..()
+	if (ishuman(user))
+		var/mob/living/carbon/human/viewer_human = user
+		if (viewer_human.inspiration)
+			. += span_info("You can quickly add and remove people from your audience by <b>middle-clicking</b> on them with this instrument in your hand.")
+			. += span_info("If you try to play with combat mode active, you'll automatically play your last song.")
+
+/obj/item/magic/infernal/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be used to heal Infernal summons.")
+
+/obj/item/magic/fae/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be used to heal Fae summons.")
+
+/obj/item/magic/elemental/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be used to heal Elemental summons.")
+
+/obj/item/rogueweapon/halberd/blacksteel/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_info("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
+
+/obj/item/rogueweapon/eaglebeak/blacksteel/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_info("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
+
+/obj/item/rogueweapon/sword/long/blacksteel/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_info("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
+
+/obj/item/rogueweapon/sword/rapier/blacksteel/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!used)
+		. += span_info("The Special Manoeuvre of this weapon can be changed. Right-click it with a free hand to select one. This can only be done once.")
+
+/obj/item/ammo_casing/caseless/rogue/javelin/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Journeyman Polearms skill.")
+
+/obj/item/gun/ballistic/revolver/grenadelauncher/crossbow/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click it in your hand, or use Alt-grip / Twirl (default Alt+G), to twirl it one-handed. Safe at Expert Crossbows skill.")
+
+/obj/structure/closet/crate/miningcar/get_mechanics_examine(mob/user)
+	. = ..()
+	if(on_rails)
+		. += span_info("You can give this a bump to send it on its way, or drag it off the rails to drag it around.")
+	else
+		. += span_info("Drag this onto a mine cart rail to set it on the rails.")
+
+/obj/item/canvas/get_mechanics_examine(mob/user)
+	. = ..()
+	if(archived)
+		return
+	if(title)
+		. += span_info("It can be archived at a printing press.")
+	else
+		. += span_info("It can be signed with a feather, then archived at a printing press.")
+
+/obj/structure/autogrinder/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Left-click it with an empty hand to switch it on or off; non-skilled engineers will rarely catch their hand under the stone.")
+	. += span_info("It grinds anything millable or anything an alchemy mortar and pestle could grind from its attached hopper and only works while connected to a powered rotational network with enough RPM.")
+	. += span_info("Drop grain or other grindables onto the attached hopper's tile and switch the grinder on; it feeds itself.")
+	. += span_info("Ground product is dropped onto the grinder's own tile.")
+
+/obj/structure/closet/crate/chest/autogrinder/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("A lidless feed bin — drop grain or other grindables onto its tile and the autogrinder pulls them in.")
+
+/obj/structure/infernalengine/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("This engine generates rotational power continuously for connected machinery while it remains active.")
+	. += span_info("Keep it out of wet terrain. Water can extinguish it and stop the engine.")
+
+/obj/structure/windmill/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Place it somewhere with a clear view of the sky - a roof or an upper floor stops it catching the wind.")
+	. += span_info("It spins fastest on the highest level; the wind weakens, halving its output, for each z-level it sits below the top.")
+	. += span_info("Middle-click it with an engineering wrench to disassemble it.")
+
+/obj/item/ingot/sylveric/get_mechanics_examine(mob/user)
+	. = ..()
+	if(HAS_TRAIT(user, TRAIT_DREAMWALKER))
+		. += span_info("You can feel the metal resonate with your dream energy. If you strike another sylveric ingot with this one, you can shape it into a weapon.")
+
+/obj/item/clothing/shoes/roguetown/boots/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Knives and lockpicks can be stowed inside.")
+
+/obj/item/clothing/mask/rogue/get_mechanics_examine(mob/user)
+	. = ..()
+	if(is_snoutable())
+		. += span_info("Alt+RMB makes room for a snout.")
+
+/obj/item/clothing/mask/rogue/xylixmask/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Alt+RMB opens the style radial menu.")
+	. += span_info("Shift+RMB toggles the snout version of the selected style.")
+	. += span_info("Shift+MMB toggles identity concealment.")
+	. += span_info("When using the harlequin styles: Right-click to honk.")
+
+/obj/item/clothing/neck/roguetown/horus/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Click on a turf or an item to see how much it is worth. Avoid tables.")
+
+/obj/item/reagent_containers/food/snacks/grown/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Smash this with a blunt object to extract seeds from it.")
+
+/obj/item/pumpkinshell/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Using a small blade, I could stab or cut it into a variety of decorations.")
+
+/obj/item/rogueweapon/sickle/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Use on any plant to instantly harvest it. HERBS turn to fiber when attacked.")
+
+/obj/item/armor_brush/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("To polish a weapon or a piece of armor, you must have the knowledge of a squire or how to repair the item. Follow the following steps:")
+	. += span_info("I. Apply polishing cream to the item.")
+	. += span_info("II. Use the coarse side (use the item to flip it) to scrub the item roughly.")
+	. += span_info("III. Use the fine side to gently polish the item.")
+	. += span_info("IV. Wash the item in a wooden bin with water to polish it.")
+	. += span_info("A fully polished item will be slightly stronger and or more durable.")
+
+/obj/structure/broadcast_horn/paid/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("A noble, yeoman, churchman, retinue member, or courtier can use this for a zenny. Others must insert a ziliqua.")
+
+/obj/item/mattcoin/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be used in hand to give it a disguise. Use it again to return it back to normal.")
+
+/obj/item/book/spellbook/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Reading it once per day allows you to unbind two spells and refund its spell point.")
+	if(born_of_rock)
+		. += span_info("This tome was made from a magical stone instead of a proper gem. Holding it in your hand with it open reduces spell charge time by [ROCK_CHARGE_REDUCTION * 100]%")
+	else
+		. += span_info("This tome was made from a gem. Holding it in your hand with it open reduces spell charge time by [GEM_CHARGE_REDUCTION * 100]%")
+
+/obj/item/reagent_containers/glass/cup/ceramic/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be brushed with a dye brush to glaze it.")
+
+/obj/item/reagent_containers/glass/bucket/pot/teapot/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("It can be brushed with a dye brush to glaze it.")
+
+/obj/item/reagent_containers/food/snacks/fat/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Use on splash intent on yourself to oil yourself up, making yourself slippery and harder to grab when uncovered. Being barefoot reduces the chance of slipping.")
+
+/obj/item/flashlight/flare/torch/lantern/psycenser/get_mechanics_examine(mob/user)
+	. = ..()
+	if(fuel > 0)
+		. += span_info("If opened, it may bless Psydon weapons and those of Psydon faith.")
+		. += span_info("Smashing a creature with it open will create a devastating explosion and render it useless.")
+
+/obj/item/signal_flare_gun/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Middle-click it to set its dial ahead of time, so it fires without asking.")
+
+/obj/item/clothing/neck/roguetown/get_mechanics_examine(mob/user)
+	. = ..()
+	if(is_snoutable())
+		. += span_info("Alt+RMB makes room for a snout.")
+
+/obj/item/clothing/suit/roguetown/shirt/undershirt/easttats/get_mechanics_examine(mob/user)
+	. = ..()
+	. -= span_info("This object can be repaired using <b>Sewing</b> and a needle.")
+	. += span_info("These tattoos slowly mend themselves after a minute without taking damage.")
+
+/obj/item/bottle_kit/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("You can change the bottle colour by using the kit. Click on a fermentation keg / distiller that has finished brewing to bottle its results.")
+
+/obj/structure/composter/get_mechanics_examine(mob/user)
+	. = ..()
+	if(unflipped_compost > flipped_compost && unflipped_compost >= COMPOST_PER_PRODUCED_ITEM)
+		. += span_info("Flip it by right clicking it with an empty hand.")
+
+/obj/item/natural/shellplant/pumpkin/get_mechanics_examine(mob/user)
+	. = ..()
+	if(open)
+		. += span_info("It is open and I could use a spoon to extract its flesh.\n")
+	else
+		. += span_info("I could cut it open to reach inside, chop it into slices or squash it for seeds.")
+
+/obj/item/reagent_containers/glass/mortar/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Left click with a pestle to grind the item inside into alchemical ingredients. Middle Click with a pestle to grind or juice them. Right click to remove it.")
+
+/obj/item/grapplinghook/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!is_loaded && grappled_turf && in_use)
+		. += span_info("I may activate this in my hand to reset.")
+
+/obj/item/dye_brush/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!dye)
+		. += span_info("Use in active hand to pick a paint.")
+
+/obj/structure/roguemachine/mail/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right click to write a letter, or insert coins to buy postage, parchment, and quills.")
+	. += span_info("Use a paper or wrapped package on the machine to send it for free.")
+	if(HAS_TRAIT(user, TRAIT_INQUISITION))
+		. += span_info("The MARQUETTE can be accessed via a secret compartment fitted within the HERMES. Load a Marque to access it.")
+		. += span_info("You can send arrival slips, accusation slips, fully loaded INDEXERs or confessions here.")
+		. += span_info("Properly sign them. Include an INDEXER where needed. Stamp them for two additional Marques.")
+
+/obj/structure/roguemachine/vaultbank/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Only [get_authority_label()] may withdraw or draft writs of loan from this jawbank - through a NERVELOCK's Institutional tab, not the jawbank itself.")
+	. += span_info("Strike it with any weapon to throttle coins loose.")
+
+/obj/structure/roguemachine/stockpile_saltcamp/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!HAS_TRAIT(user, TRAIT_DUNGEONMASTER_LABOR_CAMP))
+		. += span_info("Right click to deposit all the salt in front of the machine.")
+
+/obj/structure/pillory/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Click with a held liquid container outside combat mode to set it at the base.")
+
+/obj/item/capture_sack/get_mechanics_examine(mob/user)
+	. = ..()
+	if(occupant)
+		. += span_info("Use it in hand to loosen the mouth and release them.")
+	else
+		. += span_info("Use it on a living target to pull the sack over them. A moving target will interrupt the attempt.")
+
+/obj/item/quiver/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Click on the ground to pick up ammos on the floor.")
+
+/obj/item/rogueweapon/scabbard/get_mechanics_examine(mob/user)
+	. = ..()
+
+	if(sheathed)
+		. += span_info("The sheath is occupied by [sheathed]. Right-click to draw it; left-click with an empty hand to pick up the sheath.")
+
+/obj/item/signal_horn/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Using the horn will make you stand still and induce several ambushes to happen at once, enabling you to clear out an area. It cannot be used in rapid succession.")
+	. += span_info("Using it will leave you exhausted for a moment. Bring friends!")
+
+/obj/item/proc/get_repair_mechanics_examine(mob/user)
+	. = list()
+	if(isliving(user))
+		var/mob/living/L = user
+		if(L.STAINT < 9)
+			return
+	if(isnull(anvilrepair) && isnull(sewrepair))
+		return
+	else
+		var/str = "This object can be repaired using "
+		if(anvilrepair)
+			var/datum/skill/S = anvilrepair		//Should only ever be a skill or null
+			str += "<b>[initial(S.name)]</b> and a hammer."
+		if(sewrepair)
+			str += "<b>Sewing</b> and a needle."
+		str = span_info(str)
+		. += str
+
+/obj/item/clothing/glasses/get_mechanics_examine(mob/user)
+	. = ..()
+	if(glass_colour_type && ishuman(user))
+		. += span_info("Alt-click to toggle its colors.")
+
+/obj/item/clothing/accessory/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("\The [src] can be attached to a uniform. Alt-click to remove it once attached.")
+	if(initial(above_suit))
+		. += span_info("\The [src] can be worn above or below my suit. Alt-click to toggle.")
+
+/obj/item/clothing/suit/toggle/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Alt-click on [src] to toggle the [togglename].")
+
+/obj/item/loan_contract/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Left-click in hand to accept or decline its terms.")
+
+/obj/item/citizenry_letter/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Left-click in hand to claim its rights.")
+
+/obj/item/heart_canister/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!broken && !attuned)
+		. += span_info("Use in-hand to attune this canister to an aspect.")
+
+/obj/item/zadcage/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!resolve_link() || !resolve_cote())
+		. += span_info("This zadcage has no bond. Strike it against a zadcote to make one.")
+
+/obj/structure/roguewindow/get_mechanics_examine(mob/user)
+	. = ..()
+	var/obj/cast_repair_cost_first = repair_costs[1]
+	var/obj/cast_repair_cost_second = repair_costs[2]
+	if((!repair_started) && (obj_integrity < max_integrity))
+		. += span_info("A [initial(cast_repair_cost_first.name)] can be used to repair it.")
+		if(brokenstate)
+			. += span_info("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
+	if(repair_started)
+		. += span_info("An additional [initial(cast_repair_cost_second.name)] is needed to finish repairs.")
+
+/obj/structure/chair/frankenstein/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Useful leaflet: Strap the departed into the seat and pour the elixir in, then charge it with the crank affixed on the right. Someone has etched 'RMB' into the handle.")
+	. += span_info("There's a big juicy lever in the middle on the backside that looks enticing to pull, and that is the one that does the waking. This one is etched 'MMB'.")
+	. += span_info("RMB. MMB. Huh. Must be the initials of two brothers or something.")
+	. += span_info("Leaflet, in smaller print: should the skull upon the shoulders be none of its own, this mends no body but takes one, unmaking whoever it was to clothe another soul in it. It drinks the tank dry, no hand below a master physician's should attempt it, and the artificers accept no blame for what the Undermaiden's faithful will name sacrilege.")
+	. += span_info("Someone has scratched a reply beneath it in a cramped hand, the ink a sickly green: <i><font color='#8ea63a'>'PESTRAN HERE. As much as I enjoy worms, flesh left to rot serves nobody, and turning away a soul you had the means to seat is the greater sin by far.'</font></i>")
