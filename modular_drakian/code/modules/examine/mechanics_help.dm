@@ -654,6 +654,9 @@
 	// Matches the hat/armor components' item restrictions, before host capacity checks.
 	if(length(contents) || (item_flags & ABSTRACT) || w_class > WEIGHT_CLASS_GIGANTIC)
 		return
+	// Both cosmetic storage types have a two-by-two grid.
+	if(grid_width > 2 * world.icon_size || grid_height > 2 * world.icon_size)
+		return
 	if(istype(armor) && (armor.stab > 0 || armor.blunt > 0))
 		return
 	var/static/list/excluded_types = list(/obj/item/storage, /obj/item/rogueweapon, /obj/item/bomb, /obj/item/flashlight, /obj/item/recipe_book)
