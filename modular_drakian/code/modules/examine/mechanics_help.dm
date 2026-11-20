@@ -632,3 +632,27 @@
 	. = ..()
 	. += span_info("Bait the rod and use Cast intent on water. Fishing skill improves your results.")
 	. += span_info("Activate in hand to stop fishing.")
+
+/obj/item/clothing/head/get_mechanics_examine(mob/user)
+	. = ..()
+	if(attachment_component && istype(GetComponent(attachment_component), /datum/component/storage/concrete/roguetown/hat))
+		. += span_info("Shift-right-click while holding or wearing it to open cosmetic storage.")
+		. += span_info("Add feathers or unarmored headwear, masks and neckwear as decorative layers.")
+
+/obj/item/clothing/suit/roguetown/armor/get_mechanics_examine(mob/user)
+	. = ..()
+	if(attachment_component && istype(GetComponent(attachment_component), /datum/component/storage/concrete/roguetown/armor))
+		. += span_info("Shift-right-click while holding or wearing it to open cosmetic storage.")
+		. += span_info("Add unarmored shirts, tabards or cloaks as decorative layers.")
+
+/obj/item/clothing/mask/get_mechanics_examine(mob/user)
+	. = ..()
+	if(length(contents) || (istype(armor) && (armor.stab > 0 || armor.blunt > 0)))
+		return
+	. += span_info("Shift-right-click held or worn headwear to open its cosmetic storage and add this mask as a decorative layer.")
+
+/obj/item/clothing/suit/roguetown/shirt/get_mechanics_examine(mob/user)
+	. = ..()
+	if(length(contents) || (istype(armor) && (armor.stab > 0 || armor.blunt > 0)))
+		return
+	. += span_info("Shift-right-click held or worn armor to open its cosmetic storage and add this shirt as a decorative layer.")
