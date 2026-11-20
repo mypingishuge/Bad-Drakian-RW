@@ -637,22 +637,30 @@
 	. = ..()
 	if(attachment_component && istype(GetComponent(attachment_component), /datum/component/storage/concrete/roguetown/hat))
 		. += span_info("Shift-right-click while holding or wearing it to open cosmetic storage.")
-		. += span_info("Add feathers or unarmored headwear, masks and neckwear as decorative layers.")
+		. += span_info("Insert compatible flowers, feathers and unarmored headwear, masks or neckwear to display them as decorative layers.")
 
 /obj/item/clothing/suit/roguetown/armor/get_mechanics_examine(mob/user)
 	. = ..()
 	if(attachment_component && istype(GetComponent(attachment_component), /datum/component/storage/concrete/roguetown/armor))
 		. += span_info("Shift-right-click while holding or wearing it to open cosmetic storage.")
-		. += span_info("Add unarmored shirts, tabards or cloaks as decorative layers.")
+		. += span_info("Insert unarmored shirts, tabards, cloaks or armor to display them as decorative layers.")
 
-/obj/item/clothing/mask/get_mechanics_examine(mob/user)
-	. = ..()
-	if(length(contents) || (istype(armor) && (armor.stab > 0 || armor.blunt > 0)))
+/// Describe compatible cosmetic hosts without creating storage components during examine.
+/obj/item/proc/get_cosmetic_attachment_help()
+	var/head_cosmetic = slot_flags & (ITEM_SLOT_HEAD|ITEM_SLOT_MASK|ITEM_SLOT_NECK)
+	var/body_cosmetic = slot_flags & (ITEM_SLOT_CLOAK|ITEM_SLOT_ARMOR|ITEM_SLOT_SHIRT)
+	if(!(head_cosmetic || body_cosmetic))
 		return
-	. += span_info("Shift-right-click held or worn headwear to open its cosmetic storage and add this mask as a decorative layer.")
-
-/obj/item/clothing/suit/roguetown/shirt/get_mechanics_examine(mob/user)
-	. = ..()
-	if(length(contents) || (istype(armor) && (armor.stab > 0 || armor.blunt > 0)))
+	// Matches the hat/armor components' item restrictions, before host capacity checks.
+	if(length(contents) || (item_flags & ABSTRACT) || w_class > WEIGHT_CLASS_GIGANTIC)
 		return
-	. += span_info("Shift-right-click held or worn armor to open its cosmetic storage and add this shirt as a decorative layer.")
+	if(istype(armor) && (armor.stab > 0 || armor.blunt > 0))
+		return
+	var/static/list/excluded_types = list(/obj/item/storage, /obj/item/rogueweapon, /obj/item/bomb, /obj/item/flashlight, /obj/item/recipe_book)
+	if(is_type_in_list(src, excluded_types))
+		return
+	if(head_cosmetic && body_cosmetic)
+		return span_info("This can be inserted into compatible headwear or armor as a decorative layer. Shift-right-click that equipment while holding or wearing it to open its cosmetic storage.")
+	if(head_cosmetic)
+		return span_info("This can be inserted into compatible headwear as a decorative layer. Shift-right-click that headwear while holding or wearing it to open its cosmetic storage.")
+	return span_info("This can be inserted into compatible armor as a decorative layer. Shift-right-click that armor while holding or wearing it to open its cosmetic storage.")

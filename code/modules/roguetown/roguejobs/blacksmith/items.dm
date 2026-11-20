@@ -116,6 +116,9 @@
 
 /obj/item/get_mechanics_examine(mob/user)
 	. = ..()
+	var/cosmetic_help = get_cosmetic_attachment_help()
+	if(cosmetic_help)
+		. += cosmetic_help
 	if(glaze_bonus_pct > 0)
 		if(glazed)
 			. += span_info("Glazed in a dyebin - its value is increased by [glaze_bonus_pct]%.")
