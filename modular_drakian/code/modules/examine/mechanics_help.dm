@@ -135,6 +135,7 @@
 /obj/item/natural/thorn/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Forage bushes for thorns and fibers. Craft them into a needle through the Craft menu.")
+	. += span_info("Sneak over fallen thorns to avoid snapping them and triggering wilderness ambushes.")
 
 /obj/item/natural/bundle/get_mechanics_examine(mob/user)
 	. = ..()
@@ -185,6 +186,7 @@
 /obj/item/grown/log/tree/stick/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Carve a stick into a stake with a cutting tool. Use sticks in torches, arrows and basic tools.")
+	. += span_info("Sneak over fallen sticks to avoid snapping them and triggering wilderness ambushes.")
 
 /obj/item/grown/log/tree/stake/get_mechanics_examine(mob/user)
 	. = ..()
@@ -1152,3 +1154,7 @@
 /obj/structure/vampthrone/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Move onto its tile and drag yourself onto it to sit. Use Resist to get up.")
+
+/obj/structure/glowshroom/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Don't touch it!")
