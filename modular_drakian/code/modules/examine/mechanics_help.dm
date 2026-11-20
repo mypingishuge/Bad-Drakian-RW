@@ -354,7 +354,7 @@
 
 /obj/structure/bed/rogue/get_mechanics_examine(mob/user)
 	. = ..()
-	. += span_info("Drag yourself onto an adjacent bed and close your eyes to sleep.")
+	. += span_info("Close your eyes to sleep.")
 	. += span_info("Remove helmets and chest armor that prevent sleep. Sleeping restores energy and helps recovery and learning.")
 	. += span_info("Open your eyes to wake and use Resist to unbuckle. Press Rest/Get Up (default V) to lie down or stand.")
 
@@ -1072,3 +1072,83 @@
 /obj/item/storage/belt/get_mechanics_examine(mob/user)
 	. = ..()
 	. += span_info("Right-click a door to lock or unlock it with a matching key stored in your worn belt, including keys on a keyring.")
+
+/obj/structure/chair/get_mechanics_examine(mob/user)
+	. = ..()
+	if(can_buckle)
+		. += span_info("Move onto its tile and drag yourself onto it to sit. Drag another person on that tile onto it to buckle them in.")
+		. += span_info("Use Resist to get up.")
+
+/obj/structure/bed/get_mechanics_examine(mob/user)
+	. = ..()
+	if(can_buckle)
+		. += span_info("Move the person onto the bed's tile, then drag their sprite onto the bed to buckle them in.")
+
+/obj/structure/chair/arrestchair/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click with a wanted person buckled in to claim their bounty and fit a penance collar.")
+	. += span_info("The collar prevents attacks and spells until the sentence ends, then falls off.")
+
+/obj/structure/chair/freedomchair/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right-click with someone buckled in to remove their Castifico collar.")
+
+/obj/structure/chair/freedomchair/crafted/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("This machine falls apart after removing one collar.")
+
+/obj/structure/noose/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Move the person onto its tile, then drag their sprite onto it to put the noose around their neck.")
+	. += span_info("A chair beneath the occupant prevents hanging. Remove the chair to start the hanging.")
+	. += span_info("Left-click empty-handed to release someone. Use Resist to try to free yourself.")
+
+/obj/structure/guillotine/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Drag a person onto it while the blade is raised to strap them in.")
+	. += span_info("Right-click to drop or raise the blade. Left-click empty-handed to release the occupant.")
+	. += span_info("Use a stone on the raised blade to sharpen it.")
+
+/obj/structure/bondage/get_mechanics_examine(mob/user)
+	. = ..()
+	if(!istype(src, /obj/structure/bondage/gloryhole))
+		. += span_info("Drag yourself onto it to buckle in. To secure another person, restrain them or hold an aggressive grab, then drag them onto it.")
+	. += span_info("Use Resist to try to free yourself. Left-click empty-handed to unbuckle another person.")
+
+/obj/structure/bondage/gloryhole/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Drag yourself or another person onto it from an adjacent tile to buckle them in.")
+	. += span_info("Stand behind it to unbuckle someone else.")
+	. += span_info("To secure another person, restrain them or hold an aggressive grab first.")
+	if(!isobserver(user))
+		. += span_info("Right-click to step up to \the [src].")
+
+/obj/structure/wooden_horse/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Drag yourself onto it to buckle in. To secure another person, restrain them or hold an aggressive grab, then drag them onto it.")
+	. += span_info("Use Resist to try to free yourself. Left-click empty-handed to unbuckle another person.")
+	. += span_info("Right-click to rotate it. Remaining buckled here causes damage.")
+
+/obj/structure/target_stake/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Move the person onto its tile, then drag their sprite onto it to buckle them in.")
+	. += span_info("Use a target on the stake to mount it. Left-click empty-handed to remove it.")
+
+/obj/structure/meathook/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Pull a creature and left-click the hook empty-handed to hang them on it. This injures them.")
+	. += span_info("Left-click empty-handed to free the occupant. Use Resist to try to free yourself.")
+	. += span_info("Improves the yield of butchering. Also increases speed by 25%.")
+
+/obj/structure/fluff/walldeco/chains/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Move the person onto its tile, then drag their sprite onto it to tie them in place.")
+	. += span_info("Use Resist to try to free yourself. Left-click empty-handed to unbuckle another person.")
+
+/obj/structure/roguethrone/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Move onto its tile and drag yourself onto it to sit. Use Resist to get up.")
+
+/obj/structure/vampthrone/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Move onto its tile and drag yourself onto it to sit. Use Resist to get up.")
