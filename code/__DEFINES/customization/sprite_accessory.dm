@@ -3,6 +3,9 @@
 /// Cap on the generated accessory icon cache. Keyed by type x icon_state x colours.
 #define SPRITE_ACCESSORY_ICON_CACHE_LEN 600
 
+/// Cap on shared body appearances, whose keys include player-selected marking colours.
+#define LIMB_ICON_CACHE_LEN 1024
+
 /// Cap on the custom hair painter's colour-derived caches (palettes, swatch lists). Their keys
 /// include hex colours, so the key space is open-ended and needs a ceiling.
 #define HAIR_COLOUR_CACHE_LEN 300

@@ -480,6 +480,7 @@
 	if(length(new_limbs))
 		overlays_standing[BODYPARTS_LAYER] = new_limbs
 		limb_icon_cache[icon_render_key] = new_limbs
+		trim_cache(limb_icon_cache, LIMB_ICON_CACHE_LEN)
 
 	apply_overlay(BODYPARTS_LAYER)
 	update_damage_overlays()

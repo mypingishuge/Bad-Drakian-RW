@@ -130,9 +130,9 @@
 /obj/item/bodypart/proc/adjust_marking_overlays(list/appearance_list)
 	return
 
-/obj/item/bodypart/proc/get_specific_markings_overlays(list/specific_markings, aux = FALSE, mob/living/carbon/human/human_owner, override_color, image/raised_skin)
+/obj/item/bodypart/proc/get_specific_markings_overlays(list/specific_markings, aux = FALSE, mob/living/carbon/human/human_owner, override_color, image/raised_skin, base_layer = -BODYPARTS_LAYER)
 	var/list/appearance_list = list()
-	var/specific_layer = aux ? aux_layer : BODYPARTS_LAYER
+	var/specific_layer = aux ? -aux_layer : base_layer
 	var/specific_render_zone = aux ? aux_zone : body_zone
 	var/static/list/raised_marking_icons = list()
 	for(var/key in specific_markings)
@@ -161,7 +161,7 @@
 				raised_marking_icons[cache_key] = raised_marking
 			accessory_overlay = mutable_appearance(raised_marking, layer = -aux_layer)
 		else
-			accessory_overlay = mutable_appearance(BM.icon, marking_state, -specific_layer)
+			accessory_overlay = mutable_appearance(BM.icon, marking_state, specific_layer)
 		if(override_color)
 			accessory_overlay.color = "#[override_color]"
 		else
@@ -169,13 +169,13 @@
 		appearance_list += accessory_overlay
 	return appearance_list
 
-/obj/item/bodypart/proc/get_markings_overlays(override_color, hideaux = FALSE, image/raised_skin)
+/obj/item/bodypart/proc/get_markings_overlays(override_color, hideaux = FALSE, image/raised_skin, base_layer = -BODYPARTS_LAYER)
 	if((!markings && !aux_markings) || !owner || !ishuman(owner))
 		return
 	var/mob/living/carbon/human/human_owner = owner
 	var/list/appearance_list = list()
 	if(markings)
-		appearance_list += get_specific_markings_overlays(markings, FALSE, human_owner, override_color)
+		appearance_list += get_specific_markings_overlays(markings, FALSE, human_owner, override_color, base_layer = base_layer)
 		if(raised_skin && !hideaux)
 			appearance_list += get_specific_markings_overlays(markings, FALSE, human_owner, override_color, raised_skin)
 	if(aux_markings && !hideaux)
@@ -773,7 +773,7 @@
 				if(base_appearance.layer == -aux_layer)
 					raised_skin = base_appearance
 					break
-		var/list/marking_overlays = get_markings_overlays(override_color, hideaux, raised_skin)
+		var/list/marking_overlays = get_markings_overlays(override_color, hideaux, raised_skin, limb_layer)
 		if(marking_overlays)
 			. += marking_overlays
 

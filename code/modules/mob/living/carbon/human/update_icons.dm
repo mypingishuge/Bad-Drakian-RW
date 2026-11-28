@@ -114,9 +114,21 @@ There are several things that need to be remembered:
 /mob/living/carbon/human/update_damage_overlays()
 	START_PROCESSING(SSdamoverlays,src)
 
+/// Preserve wound and bandage visibility on the exposed chest artwork.
+/mob/living/carbon/human/proc/get_chest_damage_layer()
+	if(!dna?.species || (NO_ORGAN_FEATURES in dna.species.species_traits))
+		return DAMAGE_LAYER
+	var/obj/item/organ/breasts/breasts = getorganslot(ORGAN_SLOT_BREASTS)
+	if(!breasts?.is_visible() || !breasts.accessory_type)
+		return DAMAGE_LAYER
+	var/datum/sprite_accessory/breasts/accessory = SPRITE_ACCESSORY(breasts.accessory_type)
+	if(istype(accessory) && accessory.is_visible(breasts, null, src))
+		return EXPOSED_CHEST_LAYER - 0.1
+	return DAMAGE_LAYER
+
 /// Generates a cache key for current damage overlay state
-/mob/living/carbon/human/proc/generate_damage_overlay_key()
-	var/key = "[gender]|[dna?.species?.type]|"
+/mob/living/carbon/human/proc/generate_damage_overlay_key(chest_damage_layer)
+	var/key = "[gender]|[dna?.species?.type]|[chest_damage_layer]|"
 
 	if(gender == FEMALE || dna?.species?.use_f)
 		key += wear_armor?.flags_inv & HIDEBOOB ? "1" : "0"
@@ -148,7 +160,8 @@ There are several things that need to be remembered:
 		return
 
 	// Check if damage overlay state has changed - skip rebuild if unchanged
-	var/new_cache_key = generate_damage_overlay_key()
+	var/chest_damage_layer = get_chest_damage_layer()
+	var/new_cache_key = generate_damage_overlay_key(chest_damage_layer)
 	if(damage_overlay_cache_key == new_cache_key)
 		return
 	damage_overlay_cache_key = new_cache_key
@@ -188,6 +201,7 @@ There are several things that need to be remembered:
 		var/bleed_checker = FALSE
 		var/body_zone = BP.body_zone
 		var/aux_zone = BP.aux_zone
+		var/damage_layer = body_zone == BODY_ZONE_CHEST ? chest_damage_layer : DAMAGE_LAYER
 
 		var/used_offset = use_female_icon ? BP.offset_f : BP.offset
 		var/offset_x = 0
@@ -199,11 +213,11 @@ There are several things that need to be remembered:
 
 		if(!BP.skeletonized)
 			if(BP.brutestate)
-				damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_[BP.brutestate]0", DAMAGE_LAYER, offset_x, offset_y)
+				damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_[BP.brutestate]0", damage_layer, offset_x, offset_y)
 				legdam_overlays += get_cached_damage_overlay(limb_icon, "legdam_[body_zone]_[BP.brutestate]0", LEG_DAMAGE_LAYER, offset_x, offset_y)
 				armdam_overlays += get_cached_damage_overlay(limb_icon, "armdam_[body_zone]_[BP.brutestate]0", ARM_DAMAGE_LAYER, offset_x, offset_y)
 			if(BP.burnstate)
-				damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_0[BP.burnstate]", DAMAGE_LAYER, offset_x, offset_y)
+				damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_0[BP.burnstate]", damage_layer, offset_x, offset_y)
 				legdam_overlays += get_cached_damage_overlay(limb_icon, "legdam_[body_zone]_0[BP.burnstate]", LEG_DAMAGE_LAYER, offset_x, offset_y)
 				armdam_overlays += get_cached_damage_overlay(limb_icon, "armdam_[body_zone]_0[BP.burnstate]", ARM_DAMAGE_LAYER, offset_x, offset_y)
 			if(BP.bandage)
@@ -211,7 +225,7 @@ There are several things that need to be remembered:
 				if(BP.bleeding || length(BP.embedded_objects))
 					bleed_checker = TRUE
 					var/bandage_color = BP.bandage.color
-					damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_b", DAMAGE_LAYER, offset_x, offset_y, bandage_color)
+					damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_b", damage_layer, offset_x, offset_y, bandage_color)
 					legdam_overlays += get_cached_damage_overlay(limb_icon, "legdam_[body_zone]_b", LEG_DAMAGE_LAYER, offset_x, offset_y, bandage_color)
 					armdam_overlays += get_cached_damage_overlay(limb_icon, "armdam_[body_zone]_b", ARM_DAMAGE_LAYER, offset_x, offset_y, bandage_color)
 
@@ -219,13 +233,13 @@ There are several things that need to be remembered:
 				for(var/datum/wound/wound in BP.wounds)
 					if(wound.mob_overlay)
 						var/wound_overlay = wound.mob_overlay
-						damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_[wound_overlay]", DAMAGE_LAYER, offset_x, offset_y)
+						damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_[wound_overlay]", damage_layer, offset_x, offset_y)
 						legdam_overlays += get_cached_damage_overlay(limb_icon, "legdam_[body_zone]_[wound_overlay]", LEG_DAMAGE_LAYER, offset_x, offset_y)
 						armdam_overlays += get_cached_damage_overlay(limb_icon, "armdam_[body_zone]_[wound_overlay]", ARM_DAMAGE_LAYER, offset_x, offset_y)
 
 		if(!bleed_checker && BP.bandage)
 			var/bandage_color = BP.bandage.color
-			damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_b", DAMAGE_LAYER, offset_x, offset_y, bandage_color)
+			damage_overlays += get_cached_damage_overlay(limb_icon, "[body_zone]_b", damage_layer, offset_x, offset_y, bandage_color)
 			legdam_overlays += get_cached_damage_overlay(limb_icon, "legdam_[body_zone]_b", LEG_DAMAGE_LAYER, offset_x, offset_y, bandage_color)
 			armdam_overlays += get_cached_damage_overlay(limb_icon, "armdam_[body_zone]_b", ARM_DAMAGE_LAYER, offset_x, offset_y, bandage_color)
 
@@ -2117,6 +2131,7 @@ generate/load female uniform sprites matching all previously decided variables
 	. += "[obscured_flags]"	//features are drawn through is_visible(), which reads this
 	// These change organ visibility/layers without changing clothing or organ appearance keys.
 	. += "crotch:[sexcon?.bottom_exposed]-sprites:[sexcon?.hide_pintle_visuals]-underwear:[!!underwear]"
+	. += "chest-cover:[!!underwear?.covers_breasts]"
 
 	if(HAS_TRAIT(src, TRAIT_HUSK))
 		. += "husk"
@@ -2157,6 +2172,7 @@ generate/load female uniform sprites matching all previously decided variables
 
 	if(!redraw && limb_icon_cache[icon_render_key])
 		load_limb_from_cache()
+		update_damage_overlays()
 		resume_overlay_vision_updates()
 		return
 
@@ -2173,6 +2189,7 @@ generate/load female uniform sprites matching all previously decided variables
 	if(length(new_limbs))
 		overlays_standing[BODYPARTS_LAYER] = new_limbs
 		limb_icon_cache[icon_render_key] = new_limbs
+		trim_cache(limb_icon_cache, LIMB_ICON_CACHE_LEN)
 
 	apply_overlay(BODYPARTS_LAYER)
 	update_damage_overlays()
