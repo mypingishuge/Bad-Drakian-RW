@@ -45,17 +45,23 @@
 	return !has_world_trait(/datum/world_trait/skeleton_siege) && !has_world_trait(/datum/world_trait/goblin_siege)
 
 /mob/dead/new_player/proc/VillainChoices()
+	if(!client)
+		return
 	var/list/dat = list()
 
 	if(!SSgamemode.modifiers_rolled)
 		dat += "Wait."
 	else
+		var/player_pq = get_playerquality(client.ckey)
 		dat += "<b>Greater Villains:</b><br>"
 		var/list/open_villains = list()
 		for(var/role in SSgamemode.latejoin_villain_slots)
 			if(SSgamemode.latejoin_villain_open(role))
 				var/slots = SSgamemode.latejoin_villain_slots[role]
-				open_villains += "<a href='byond://?src=[REF(src)];villain_latejoin=[role]'>Join as a [role]</a> ([slots] open, [get_antagonist_min_pq(role)] PQ)<br>"
+				var/minimum_pq = get_antagonist_min_pq(role)
+				var/below_minimum = minimum_pq > 0 && player_pq < minimum_pq
+				var/pq_class = below_minimum ? " class='job-unavailable'" : ""
+				open_villains += "<a[pq_class] href='byond://?src=[REF(src)];villain_latejoin=[role]'>Join as a [role]</a> ([slots] open)[villain_pq_requirement(below_minimum, minimum_pq)]<br>"
 		for(var/track in SSmigrants.track_forming)
 			var/datum/migrant_wave/wave = MIGRANT_WAVE(SSmigrants.track_forming[track])
 			if(!wave || wave.hidden)
@@ -84,6 +90,13 @@
 			if(!J || !J.total_positions)
 				continue
 			found = TRUE
+			var/minimum_pq = get_antagonist_min_pq(J.title)
+			#ifdef USES_PQ
+			minimum_pq = max(minimum_pq, J.min_pq || 0)
+			#endif
+			var/below_minimum = minimum_pq > 0 && player_pq < minimum_pq
+			var/pq_class = below_minimum ? " class='job-unavailable'" : ""
+			var/pq_requirement = villain_pq_requirement(below_minimum, minimum_pq)
 			if(SSticker.current_state <= GAME_STATE_PREGAME)
 				var/pref_label = "NEVER"
 				var/pref_color = "red"
@@ -101,9 +114,9 @@
 						pref_label = "Low"
 						pref_color = "orange"
 						next_level = 2
-				dat += "<a href='?src=[REF(J)];explainjob=1'><font>[J.title]</font></a>([J.total_positions] slots) - <a href='byond://?src=[REF(src)];villain_pref=[J.title];level=[next_level]'><font color=[pref_color]>[pref_label]</font></a><br>"
+				dat += "<a[pq_class] href='?src=[REF(J)];explainjob=1'><font>[J.title]</font></a>([J.total_positions] slots) - <a href='byond://?src=[REF(src)];villain_pref=[J.title];level=[next_level]'><font color=[pref_color]>[pref_label]</font></a>[pq_requirement]<br>"
 			else
-				dat += "<a href='?src=[REF(J)];explainjob=1'><font>[J.title]</font></a><a href='byond://?src=[REF(src)];SelectedJob=[J.title]'>([J.current_positions]/[J.total_positions])</a><a href='?src=[REF(J)];jobsubclassinfo=1'><b><font color = '#6b6743'>(!)</font></b></a><br>"
+				dat += "<a[pq_class] href='?src=[REF(J)];explainjob=1'><font>[J.title]</font></a><a[pq_class] href='byond://?src=[REF(src)];SelectedJob=[J.title]'>([J.current_positions]/[J.total_positions])</a><a href='?src=[REF(J)];jobsubclassinfo=1'><b><font color = '#6b6743'>(!)</font></b></a>[pq_requirement]<br>"
 
 		if(!found)
 			dat += "No villain roles this round."
@@ -115,6 +128,9 @@
 	popup.add_stylesheet("playeroptions", 'html/browser/playeroptions.css')
 	popup.set_content(jointext(dat, ""))
 	popup.open(FALSE)
+
+/proc/villain_pq_requirement(below_minimum, minimum_pq)
+	return below_minimum ? " <span class='job-unavailable'>Requires [minimum_pq] PQ</span>" : ""
 
 /mob/dead/new_player/var/editing_bounty_preset = FALSE
 

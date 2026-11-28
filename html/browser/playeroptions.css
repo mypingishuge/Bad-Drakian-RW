@@ -24,6 +24,7 @@ a.job-unavailable:link,
 a.job-unavailable:visited,
 a.job-unavailable:hover,
 a.job-unavailable:active,
-a.job-unavailable .priority {
+a.job-unavailable .priority,
+span.job-unavailable {
   color: #700000;
 }
