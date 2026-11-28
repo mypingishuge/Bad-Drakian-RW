@@ -15,6 +15,8 @@
 
 	// Config actually from the JSON - should default to Roguetest
 	var/map_name = "Roguetest"
+	/// Optional player-facing name (including any article) for cross-map tracking.
+	var/tracking_name
 	var/map_path = "map_files/roguetest"
 	var/map_file = "roguetest.dmm"
 	var/map_folder = "_maps"
@@ -79,6 +81,8 @@
 
 	CHECK_EXISTS("map_name")
 	map_name = json["map_name"]
+	if(istext(json["tracking_name"]))
+		tracking_name = json["tracking_name"]
 	CHECK_EXISTS("map_path")
 	map_path = json["map_path"]
 

@@ -204,6 +204,11 @@
 		return
 
 	var/mark_name = html_encode(mark.real_name)
+	var/destination = describe_cross_map_tracking(user_turf, target_turf)
+	if(destination)
+		to_chat(user, span_notice("[mark_name] is [destination]."))
+		return
+
 	if(user_turf.z != target_turf.z)
 		to_chat(user, span_notice("[mark_name] is [describe_cross_level_tracking(user_turf, target_turf)]."))
 	else

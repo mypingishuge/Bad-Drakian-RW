@@ -299,6 +299,29 @@
 
 	return dist
 
+/// Returns a destination clue when coordinates cannot be compared, or null within the same map.
+/proc/describe_cross_map_tracking(turf/origin, turf/target)
+	var/datum/loaded_map_region/origin_region = SSmapping.get_loaded_map_region(origin)
+	var/datum/loaded_map_region/target_region = SSmapping.get_loaded_map_region(target)
+	if(target_region && origin_region == target_region)
+		return null
+
+	var/area/target_area = get_area(target)
+	if(!origin_region && !target_region && origin.z == target.z && get_area(origin) == target_area)
+		return null
+
+	// These realms share the compiled map with other areas.
+	if(istype(target_area, /area/rogue/indoors/deathsedge))
+		return "in Death's Precipice"
+	if(istype(target_area, /area/rogue/underworld/dream))
+		return "in the Abyssal Dream"
+	if(istype(target_area, /area/rogue/underworld/adventurespawn))
+		return "in the Wayfarer's Dream"
+
+	if(target_region?.tracking_name)
+		return "in [html_encode(target_region.tracking_name)]"
+	return "somewhere beyond this region"
+
 /// Describes the relative position of a target on a different z-level.
 /proc/describe_cross_level_tracking(turf/origin, turf/target)
 	var/vertical = target.z > origin.z ? "above" : "below"

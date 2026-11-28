@@ -131,6 +131,11 @@
 	if(!user_turf || !target_turf)
 		return
 
+	var/destination = describe_cross_map_tracking(user_turf, target_turf)
+	if(destination)
+		to_chat(user, span_notice("I catch [html_encode(tracked_target.real_name)]'s scent [destination]."))
+		return
+
 	if(user_turf.z != target_turf.z)
 		to_chat(user, span_notice("The scent of [html_encode(tracked_target.real_name)] drifts from [describe_cross_level_tracking(user_turf, target_turf)]."))
 	else

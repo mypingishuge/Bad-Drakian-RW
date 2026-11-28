@@ -1,5 +1,6 @@
 {
 	"map_name": "Bandit Fortress",
+	"tracking_name": "the Bandit Fortress",
 	"map_path": "map_files/otherz",
 	"map_file": "bandit_fortress.dmm",
 	"traits": [{"Name": "bandit_fortress", "Up": true}, {"Up": true, "Down": true}, {"Down": true}]

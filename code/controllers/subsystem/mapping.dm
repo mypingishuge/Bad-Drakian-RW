@@ -16,6 +16,8 @@ SUBSYSTEM_DEF(mapping)
 
 	/// trait signature -> list of /datum/shared_z_stack, see LoadOtherZ
 	var/list/shared_z_stacks = list()
+	/// One footprint group per loaded map, even when it shares floors with another map.
+	var/list/datum/loaded_map_region/loaded_map_regions = list()
 
 	var/list/ruins_templates = list()
 	var/datum/space_level/isolated_ruins_z //Created on demand during ruin loading.
@@ -129,13 +131,14 @@ SUBSYSTEM_DEF(mapping)
 	used_turfs = SSmapping.used_turfs
 
 	current_map = SSmapping.current_map
+	loaded_map_regions = SSmapping.loaded_map_regions
 
 	clearing_reserved_turfs = SSmapping.clearing_reserved_turfs
 
 	z_list = SSmapping.z_list
 
 #define INIT_ANNOUNCE(X) to_chat(world, "<span class='boldannounce'>[X]</span>"); log_world(X)
-/datum/controller/subsystem/mapping/proc/LoadGroup(list/errorList, name, path, files, map_folder, list/traits, list/default_traits, silent = FALSE)
+/datum/controller/subsystem/mapping/proc/LoadGroup(list/errorList, name, path, files, map_folder, list/traits, list/default_traits, silent = FALSE, tracking_name)
 	. = list()
 	var/start_time = REALTIMEOFDAY
 
@@ -181,18 +184,53 @@ SUBSYSTEM_DEF(mapping)
 		++i
 
 	// load the maps
+	var/datum/loaded_map_region/region = new(tracking_name)
 	for (var/P in parsed_maps)
 		var/datum/parsed_map/pm = P
+		var/list/bounds = pm.bounds
+		var/file_z = start_z + parsed_maps[P]
 		var/load_start = REALTIMEOFDAY
 		var/load_rss = track_memory ? get_process_rss_bytes() : null
-		if (!pm.load(1, 1, start_z + parsed_maps[P], no_changeturf = TRUE))
+		if (!pm.load(1, 1, file_z, no_changeturf = TRUE))
 			errorList |= pm.original_path
+		else
+			region.add_footprint(bounds, 1, 1, file_z)
 		if(track_memory)
 			log_map_memory("load", pm.original_path, load_rss, load_start)
 
+	if(length(region.footprints))
+		loaded_map_regions += region
 	log_game("Loaded [name] in [(REALTIMEOFDAY - start_time)/10]s!")
 
 	return parsed_maps
+
+/datum/loaded_map_region
+	var/tracking_name
+	/// Absolute bounds for each file in this map group.
+	var/list/footprints = list()
+
+/datum/loaded_map_region/New(tracking_name)
+	src.tracking_name = tracking_name
+	return ..()
+
+/datum/loaded_map_region/proc/add_footprint(list/bounds, x, y, z)
+	// Use the parsed bounds and apply the same offsets as the loader.
+	footprints += list(list(
+		bounds[MAP_MINX] + x - 1, bounds[MAP_MINY] + y - 1, bounds[MAP_MINZ] + z - 1,
+		bounds[MAP_MAXX] + x - 1, bounds[MAP_MAXY] + y - 1, bounds[MAP_MAXZ] + z - 1,
+	))
+
+/datum/loaded_map_region/proc/contains(turf/location)
+	for(var/list/bounds as anything in footprints)
+		if(location.x >= bounds[MAP_MINX] && location.x <= bounds[MAP_MAXX] && location.y >= bounds[MAP_MINY] && location.y <= bounds[MAP_MAXY] && location.z >= bounds[MAP_MINZ] && location.z <= bounds[MAP_MAXZ])
+			return TRUE
+	return FALSE
+
+/datum/controller/subsystem/mapping/proc/get_loaded_map_region(turf/location)
+	for(var/datum/loaded_map_region/region as anything in loaded_map_regions)
+		if(region.contains(location))
+			return region
+	return null
 
 /// Distance kept between templates sharing a z-level, must exceed client view range
 #define ZSTACK_PACK_MARGIN 20
@@ -235,7 +273,7 @@ SUBSYSTEM_DEF(mapping)
 /datum/controller/subsystem/mapping/proc/LoadOtherZ(list/errorList, list/configs)
 	for (var/datum/map_config/conf in configs)
 		if (islist(conf.map_file))  // multi-file configs use the classic loader untouched
-			LoadGroup(errorList, conf.map_name, conf.map_path, conf.map_file, conf.map_folder, conf.traits, ZTRAITS_STATION)
+			LoadGroup(errorList, conf.map_name, conf.map_path, conf.map_file, conf.map_folder, conf.traits, ZTRAITS_STATION, tracking_name = conf.tracking_name)
 			continue
 
 		var/track_memory = !CONFIG_GET(flag/disable_memory_stats)
@@ -295,6 +333,10 @@ SUBSYSTEM_DEF(mapping)
 		var/load_rss = track_memory ? get_process_rss_bytes() : null
 		if (!pm.load(pos[1], pos[2], stack.start_z, no_changeturf = TRUE))
 			errorList |= pm.original_path
+		else
+			var/datum/loaded_map_region/region = new(conf.tracking_name)
+			region.add_footprint(bounds, pos[1], pos[2], stack.start_z)
+			loaded_map_regions += region
 		if (track_memory)
 			log_map_memory("load", pm.original_path, load_rss, load_start)
 
@@ -315,7 +357,7 @@ SUBSYSTEM_DEF(mapping)
 	INIT_ANNOUNCE("Loading [current_map.map_name]...")
 	#endif
 
-	LoadGroup(FailedZs, "Station", current_map.map_path, current_map.map_file, current_map.map_folder, current_map.traits, ZTRAITS_STATION)
+	LoadGroup(FailedZs, "Station", current_map.map_path, current_map.map_file, current_map.map_folder, current_map.traits, ZTRAITS_STATION, tracking_name = "the main region")
 
 	var/list/otherZ = list()
 
