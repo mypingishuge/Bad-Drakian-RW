@@ -908,6 +908,8 @@
 			if(istype(R, /datum/reagent/consumable/nutriment))
 				var/list/taste_data = R.data
 				for(var/taste in taste_data)
+					if(!length(taste))
+						continue
 					var/ratio = taste_data[taste]
 					var/amount = ratio * R.taste_mult * R.volume
 					if(taste in tastes)
@@ -916,6 +918,8 @@
 						tastes[taste] = amount
 			else
 				var/taste_desc = R.taste_description
+				if(!length(taste_desc))
+					continue
 				if(istype(R, /datum/reagent/consumable/soup))
 					LAZYADD(soup_tastes, taste_desc)
 				var/taste_amount = R.volume * R.taste_mult
