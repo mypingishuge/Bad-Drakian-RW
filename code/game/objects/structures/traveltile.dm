@@ -110,6 +110,8 @@
 	. = ..()
 
 /obj/structure/fluff/traveltile/Crossed(atom/movable/AM)
+	// Let the carrier's Move finish bringing its buckled passengers onto this tile.
+	set waitfor = FALSE
 	. = ..()
 	var/fou
 	if(!aportalgoesto)
@@ -129,7 +131,7 @@
 		to_chat(AM, "<b>It is a dead end.</b>")
 
 /obj/structure/fluff/traveltile/proc/try_living_travel(obj/structure/fluff/traveltile/T, mob/living/L)
-	if(!can_go(L))
+	if(ishuman(L.buckled) || !can_go(L))
 		return FALSE
 	if(!has_travel_pq(L))
 		return FALSE
@@ -139,6 +141,8 @@
 		return FALSE
 	to_chat(L, "<b>[travel_message]</b>")
 	if(do_after(L, travel_time, needhand = FALSE, target = src))
+		if(QDELETED(src) || QDELETED(T) || QDELETED(L) || T.aportalid != aportalgoesto || ishuman(L.buckled) || !has_access(L))
+			return FALSE
 		if(has_retained_knot(L))
 			return FALSE
 		if(L.pulledby)
@@ -146,8 +150,7 @@
 			return FALSE
 		if(!has_travel_pq(L))
 			return FALSE
-		perform_travel(T, L)
-		return TRUE
+		return perform_travel(T, L)
 	return FALSE
 
 /mob/living
@@ -170,17 +173,34 @@
 #endif
 	return TRUE
 
+/obj/structure/fluff/traveltile/proc/get_passage_riders(mob/living/carrier)
+	if(!ishuman(carrier) || !carrier.has_buckled_mobs())
+		return
+	var/list/riders
+	for(var/mob/living/rider in carrier.buckled_mobs)
+		if(!QDELETED(rider) && rider.buckled == carrier && rider.loc == carrier.loc)
+			LAZYSET(riders, rider, rider.recent_travel)
+	return riders
+
 /obj/structure/fluff/traveltile/proc/has_retained_knot(mob/living/L)
-	for(var/mob/living/carbon/human/H in list(L, L.pulling))
+	var/list/travellers = list(L, L.pulling)
+	var/list/riders = get_passage_riders(L)
+	if(riders)
+		travellers |= riders
+	for(var/mob/living/carbon/human/H in travellers)
 		if(H.sexcon?.knot_requires_manual_release() && H.sexcon.knot_movement_consent_valid())
 			to_chat(L, span_warning("I need to release the knot before travelling."))
 			return TRUE
 	return FALSE
 
 /obj/structure/fluff/traveltile/proc/perform_travel(obj/structure/fluff/traveltile/T, mob/living/L)
+	var/turf/destination = get_turf(T)
+	if(!destination)
+		return FALSE
+	var/list/riders = get_passage_riders(L)
 	if(watchable && !L.restrained(ignore_grab = TRUE)) // heavy-handedly prevents using prisoners to metagame camp locations. pulledby would stop this but prisoners can also be kicked/thrown into the tile repeatedly
 		for(var/mob/living/carbon/human/H in hearers(6,src))
-			if(H == L)
+			if(H == L || (riders && (H in riders)))
 				continue
 			if(!H.IsUnconscious() && H.stat == CONSCIOUS && !HAS_TRAIT(H, TRAIT_PARALYSIS) && !HAS_TRAIT(H, required_trait) && !HAS_TRAIT(H, TRAIT_BLIND))
 				to_chat(H, "<b>I watch [L.name? L : "someone"] go through a well-hidden entrance.</b>")
@@ -189,6 +209,8 @@
 				ADD_TRAIT(H, required_trait, TRAIT_GENERIC)
 
 	var/atom/movable/pullingg = L.pulling
+	if(riders && (pullingg in riders))
+		pullingg = null
 
 	// handle unknotting
 	if(ishuman(L))
@@ -196,21 +218,31 @@
 		if(knot_haver.sexcon.knotted_status)
 			knot_haver.sexcon.knot_remove()
 
-	L.recent_travel = world.time
+	var/travel_timestamp = max(world.time, 1)
+	L.recent_travel = travel_timestamp
+	// Mark passengers before either move can trigger the destination's Crossed().
+	for(var/mob/living/rider in riders)
+		rider.recent_travel = travel_timestamp
 	if(pullingg)
 		if(ishuman(pullingg)) // also check if pulled mob is knotted
 			var/mob/living/carbon/human/H = pullingg
 			if(H.sexcon.knotted_status)
 				H.sexcon.knot_remove()
-		pullingg.recent_travel = world.time
-		pullingg.forceMove(T.loc)
+		pullingg.recent_travel = travel_timestamp
+		pullingg.forceMove(destination)
 
-	L.forceMove(T.loc)
+	if(riders)
+		L.travel_z_with_riders(destination)
+		for(var/mob/living/rider in riders)
+			if(!QDELETED(rider) && rider.loc != destination && rider.recent_travel == travel_timestamp)
+				rider.recent_travel = riders[rider]
+	else
+		L.forceMove(destination)
 
-	if(pullingg)
+	if(!QDELETED(pullingg) && L.loc == destination)
 		L.start_pulling(pullingg, supress_message = TRUE)
 
-	return
+	return L.loc == destination
 
 /obj/structure/fluff/traveltile/proc/has_access(atom/movable/AM)
 	var/has_job = FALSE
