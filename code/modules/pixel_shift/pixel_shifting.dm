@@ -9,6 +9,7 @@
 
 /datum/keybinding/mob/pixel_shift
 	hotkey_keys = list() // purposefully left blank
+	hold_binding = TRUE
 	name = "pixel_shift"
 	full_name = "Pixel Shift"
 	description = "Hold: movement keys shift and Q/E rotate. Use your empty hand with a grab in the other hand to pose the grabbed person."
@@ -18,6 +19,8 @@
 	if(.)
 		return
 	var/mob/M = user.mob
+	if(!M)
+		return FALSE
 	M.shifting = TRUE
 	return TRUE
 
@@ -26,6 +29,8 @@
 	if(.)
 		return
 	var/mob/M = user.mob
+	if(!M)
+		return FALSE
 	M.shifting = FALSE
 	return TRUE
 

@@ -43,10 +43,11 @@
 
 	if(length(keys_held) > MAX_HELD_KEYS)
 		keys_held.Cut(1,2)
+		release_inactive_keybindings()
 
 	keys_held[_key] = TRUE
 	// Consume rotation actions while posing; the input loop repeats them.
-	if(mob.shifting)
+	if(mob?.shifting)
 		var/rotation_angle = pixel_rotation_key_angle(_key)
 		if(rotation_angle)
 			step_pixel_rotation(rotation_angle)
@@ -71,17 +72,32 @@
 		else if(movement_locked && mob)
 			SEND_SIGNAL(mob, COMSIG_MOB_MOVEMENT_LOCKED_KEY_PRESSED, camera_relative_dir(movement))
 
+	var/list/chord_keys
 	var/keycount = 0
 	for(var/kb_name in prefs.key_bindings[full_key])
 		keycount++
 		var/datum/keybinding/kb = GLOB.keybindings_by_name[kb_name]
 		if(kb)
+			if(kb.hold_binding)
+				if(!chord_keys)
+					chord_keys = list(_key)
+					if(AltMod)
+						chord_keys |= "Alt"
+					if(CtrlMod)
+						chord_keys |= "Ctrl"
+					if(ShiftMod)
+						chord_keys |= "Shift"
+				var/list/chords = held_keybindings[kb_name]
+				if(!chords)
+					chords = list()
+					held_keybindings[kb_name] = chords
+				chords[full_key] = chord_keys
 			if(kb.down(src) && keycount >= MAX_COMMANDS_PER_KEY)
 				break
 
 	holder?.key_down(_key, src)
-	mob.focus?.key_down(_key, src)
-	mob.update_mouse_pointer()
+	mob?.focus?.key_down(_key, src)
+	mob?.update_mouse_pointer()
 
 /client/verb/keyUp(_key as text)
 	set instant = TRUE
@@ -120,6 +136,7 @@
 		return
 
 	keys_held -= _key
+	release_inactive_keybindings()
 
 	var/movement = movement_keys[_key]
 	if(movement)
@@ -127,16 +144,30 @@
 		if(!movement_locked && !(next_move_dir_add & movement) && !(mob?.shifting && pixel_rotation_key_angle(_key)))
 			next_move_dir_sub |= movement
 
-	// We don't do full key for release, because for mod keys you
-	// can hold different keys and releasing any should be handled by the key binding specifically
+	// Preserve the bare-key release path for bindings that don't track an active chord.
 	for (var/kb_name in prefs.key_bindings[_key])
 		var/datum/keybinding/kb = GLOB.keybindings_by_name[kb_name]
-		if(kb)
+		if(kb && !kb.hold_binding)
 			if(kb.up(src))
 				break
 	holder?.key_up(_key, src)
-	mob.focus?.key_up(_key, src)
-	mob.update_mouse_pointer()
+	mob?.focus?.key_up(_key, src)
+	mob?.update_mouse_pointer()
+
+/// End a hold action when none of the chords that started it are still held.
+/client/proc/release_inactive_keybindings()
+	if(!length(held_keybindings))
+		return
+	for(var/kb_name in held_keybindings.Copy())
+		var/list/chords = held_keybindings[kb_name]
+		for(var/chord in chords.Copy())
+			var/list/chord_keys = chords[chord]
+			if(length(chord_keys - keys_held))
+				chords -= chord
+		if(!length(chords))
+			held_keybindings -= kb_name
+			var/datum/keybinding/kb = GLOB.keybindings_by_name[kb_name]
+			kb?.up(src)
 
 /client/verb/activeInput()
 	set hidden = 1

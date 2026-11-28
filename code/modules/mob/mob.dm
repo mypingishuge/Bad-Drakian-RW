@@ -641,10 +641,7 @@ GLOBAL_VAR_INIT(mobids, 1)
 		if (world.time < memory_throttle_time)
 			return
 		memory_throttle_time = world.time + 5 SECONDS
-		msg = copytext(msg, 1, MAX_MESSAGE_LEN)
-		msg = sanitize(msg)
-
-		mind.store_memory(msg)
+		mind.append_player_note(copytext_char(msg, 1, MAX_MESSAGE_LEN + 1))
 //	else
 //		to_chat(src, "You don't have a mind datum for some reason, so you can't add a note to it.")
 

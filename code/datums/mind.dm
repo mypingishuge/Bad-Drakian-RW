@@ -42,6 +42,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	var/critical_yield_reminded = FALSE
 
 	var/memory
+	/// Plain-text notes written by the player through the IC tab.
+	var/player_notes
 
 	var/datum/job/assigned_role
 	var/special_role
@@ -406,6 +408,13 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 /datum/mind/proc/wipe_memory()
 	memory = null
+	player_notes = null
+
+/datum/mind/proc/append_player_note(note)
+	var/notes = length(player_notes) ? "[player_notes]\n[note]" : note
+	var/limit = MAX_MESSAGE_LEN * 100
+	var/excess = length_char(notes) - limit
+	player_notes = excess > 0 ? copytext_char(notes, excess + 1) : notes
 
 // Datum antag mind procs
 /datum/mind/proc/add_antag_datum(datum_type_or_instance, team, admin_panel)
@@ -497,6 +506,10 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 		recipient = current
 	var/output = "<B>[current.real_name]'s Memories:</B><br>"
 	output += memory
+	if(length(player_notes))
+		output += "<b>Personal Notes:</b><br>[sanitize_preserve_newlines(player_notes)]<br>"
+	if(window && recipient == current && recipient?.mind == src)
+		output += "<a href='?src=[REF(src)];edit_player_notes=1'>Edit Personal Notes</a><br>"
 
 	if(personal_objectives.len)
 		output += "<B>Personal Objectives:</B>"
@@ -520,7 +533,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 
 	if(window)
 		recipient << browse(output,"window=memory")
-	else if(all_objectives.len || memory || personal_objectives.len)
+	else if(all_objectives.len || memory || player_notes || personal_objectives.len)
 		to_chat(recipient, "<i>[output]</i>")
 
 /// output current targets to the player
@@ -600,6 +613,22 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 		recipient << browse(output,"window=memory")
 
 /datum/mind/Topic(href, href_list)
+	if(href_list["edit_player_notes"])
+		var/mob/editor = usr
+		var/client/editor_client = editor?.client
+		if(!editor_client || editor != current || editor.mind != src)
+			return
+		var/original_notes = player_notes
+		var/updated_notes = input(editor, "Edit your personal notes.", "Personal Notes", original_notes) as null|message
+		if(isnull(updated_notes) || QDELETED(src) || QDELETED(editor) || editor.client != editor_client || editor != current || editor.mind != src)
+			return
+		if(player_notes != original_notes)
+			to_chat(editor, span_warning("Your notes changed while the editor was open. Open it again to edit the latest version."))
+			return
+		player_notes = copytext_char(updated_notes, 1, MAX_MESSAGE_LEN * 100 + 1)
+		show_memory(editor)
+		return
+
 	if(!check_rights(R_ADMIN))
 		return
 

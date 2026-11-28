@@ -24,7 +24,7 @@
 		"I can smell my own flesh. It smells foul."
 	)
 
-/datum/status_effect/zombie_infection/on_creation(mob/living/new_owner, time_to_transform = 5 MINUTES, from_infected_wake = TRUE)
+/datum/status_effect/zombie_infection/on_creation(mob/living/new_owner, time_to_transform = ZOMBIE_INFECTION_TIME, from_infected_wake = TRUE)
 	. = ..()
 	if(!. || QDELETED(src))
 		return
@@ -84,7 +84,7 @@
 	icon_state = "poison"
 
 // Updated proc to use status effect
-/mob/living/carbon/human/proc/attempt_zombie_infection(mob/living/carbon/human/source, infection_type, wake_delay = 0)
+/mob/living/carbon/human/proc/attempt_zombie_infection(mob/living/carbon/human/source, infection_type, wake_delay = ZOMBIE_INFECTION_TIME)
 	if(!ishuman(source) || !source.is_risen_deadite()) // Covers NPC deadites as well as players
 		return FALSE
 

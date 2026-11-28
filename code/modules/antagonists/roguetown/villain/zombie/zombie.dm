@@ -1,6 +1,3 @@
-#define ZOMBIE_FIRST_BITE_CHANCE 15
-#define ZOMBIE_BITE_CONVERSION_TIME 1.5 MINUTES
-
 /datum/antagonist/zombie
 	name = "Deadite"
 	antag_hud_type = ANTAG_HUD_ZOMBIE
@@ -116,13 +113,13 @@
 
 	Initial bite is: rogueweapons/mmb/bite.dm, /mob/living/carbon/onbite(mob/living/carbon/human/user) ->
 	bite_victim.zombie_infect_attempt() ->
-	attempt_zombie_infection(src, "bite", ZOMBIE_BITE_CONVERSION_TIME) -> rng check here
+	rolls for infection and applies the standard infection timer
 	time passes ->
 	wake_zombie.
 
 	Wound transformation goes: rogueweapons/mmb/bite.dm, /obj/item/grabbing/bite/proc/bitelimb(mob/living/carbon/human/user) ->
 	/datum/wound/proc/zombie_infect_attempt() ->
-	human_owner.attempt_zombie_infection(src, "wound", zombie_infection_time) ->
+	human_owner.attempt_zombie_infection(source, "wound") ->
 	time passes ->
 	wake_zombie
 

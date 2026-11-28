@@ -662,6 +662,10 @@
 
 /// Rot accumulated before a corpse rises as a deadite. Lives here rather than in rotting.dm because
 /// the ghost lock in observer.dm uses it too
-#define DEAD_TO_ZOMBIE_TIME (5 MINUTES)
+#define DEAD_TO_ZOMBIE_TIME (4 MINUTES)
+/// Starting delay for a fresh living deadite infection, before resistance or repeat bites.
+#define ZOMBIE_INFECTION_TIME (3 MINUTES)
+/// Chance for a qualifying deadite bite to infect.
+#define ZOMBIE_INFECTION_PROBABILITY 20
 
 #define PIXEL_ROTATION_STANDING_LIMIT 30

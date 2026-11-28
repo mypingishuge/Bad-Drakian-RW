@@ -727,7 +727,7 @@ GLOBAL_LIST_INIT(character_flaws, list(
 
 /datum/charflaw/leprosy
 	name = "Leper"
-	desc = "I am cursed with leprosy! Too poor to afford treatment, my skin now lays violated by lesions, I can no longer run but my body and extremities are numb to pain and temperature. My presence disturbs even the most stalwart men."
+	desc = "Leprosy leaves me covered in lesions and unable to run. I feel no pain, and injuries do not slow me down. My presence disturbs even the most stalwart men."
 	point_value = 1
 
 /datum/charflaw/leprosy/apply_post_equipment(mob/user)

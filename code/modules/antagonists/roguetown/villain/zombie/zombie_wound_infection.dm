@@ -1,6 +1,3 @@
-#define ZOMBIE_INFECTION_PROBABILITY 20 	/// Zombie infection probability for bites on a wound
-#define ZOMBIE_INFECTION_TIME 2 MINUTES	/// Time taken until zombie infection kicks in (unit wakes up as a zombie)
-
 /*
 	ZOMBIFICATION
 */
@@ -18,11 +15,9 @@
 
 	var/mob/living/carbon/human/wound_owner = owner
 
-	wound_owner.attempt_zombie_infection(source = source, infection_type = "wound", wake_delay = ZOMBIE_INFECTION_TIME) //Infect the unit
+	wound_owner.attempt_zombie_infection(source = source, infection_type = "wound")
 
 	severity = WOUND_SEVERITY_BIOHAZARD //Show the wound
 	if (bodypart_owner)
 		sortTim(bodypart_owner.wounds, GLOBAL_PROC_REF(cmp_wound_severity_dsc))
 	return TRUE
-
-#undef ZOMBIE_INFECTION_TIME
