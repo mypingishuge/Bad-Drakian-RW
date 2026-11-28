@@ -31,12 +31,13 @@
 
 /obj/item/storage/belt/rogue/pouch/Exited(atom/movable/gone, direction)
 	. = ..()
-	if(!length(contents) && icon_state != "pouch_e")
+	if(icon_state == "pouch" && !length(contents))
 		update_icon()
 
 /obj/item/storage/belt/rogue/pouch/update_icon_state()
 	. = ..()
-	icon_state = length(contents) ? "pouch" : "pouch_e"
+	if(initial(icon_state) == "pouch")
+		icon_state = length(contents) ? "pouch" : "pouch_e"
 
 /obj/item/storage/belt/rogue/pouch/build_worn_icon(default_layer = 0, default_icon_file = null, isinhands = FALSE, femaleuniform = NO_FEMALE_UNIFORM, override_state = null, female = FALSE, customi = null, sleeveindex, boobed_overlay = FALSE, icon/clip_mask = null)
 	// The empty sprite only exists in the inventory and ground icon sheet.
