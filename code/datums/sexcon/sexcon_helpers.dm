@@ -226,7 +226,7 @@
 			if(wife.mpreg)
 				to_chat(wife, span_love("I feel a surge of warmth inside me again..."))
 				return
-			to_chat(wife, span_love("I feel a strange surge of warmth inside me... Am I pregnant?.."))
+			to_chat(wife, span_love("I feel a strange surge of warmth inside me... Am I pregnant?"))
 			wife.mpreg = TRUE
 			record_round_statistic(STATS_IMPREGNATIONS)
 			wife.start_impregnation_lactation()
