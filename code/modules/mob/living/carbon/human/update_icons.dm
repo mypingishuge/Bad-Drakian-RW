@@ -2106,6 +2106,9 @@ generate/load female uniform sprites matching all previously decided variables
 
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		. += BP.generate_limb_cache_key(hideaux = should_hide_bodypart_aux(BP))
+		// Full-body appearances include markings, while the per-limb base cache does not.
+		if(length(BP.markings) || length(BP.aux_markings))
+			. += json_encode(list(BP.markings, BP.aux_markings))
 
 	// Tail organs and tail features both select their sprite from this state.
 	var/obj/item/organ/tail/tail = getorganslot(ORGAN_SLOT_TAIL)

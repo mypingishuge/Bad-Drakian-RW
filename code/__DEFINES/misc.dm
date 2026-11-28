@@ -41,6 +41,8 @@
 #define LEGSLEEVE_LAYER			35
 #define SHOESLEEVE_LAYER		34
 #define SHIRT_LAYER				33
+// Side-facing arm skin and its markings belong behind the main shirt and bracer sprites.
+#define ARM_SKIN_LAYER			33.2
 #define WRISTS_LAYER			32
 #define ARMOR_LAYER				31
 #define TABARD_LAYER			30
@@ -54,6 +56,8 @@
 #define WRISTSLEEVE_LAYER		23
 #define ARMORSLEEVE_LAYER		22
 #define GLOVESLEEVE_LAYER		21
+// Exposed chest artwork draws above arm equipment, including bracers worn over gloves.
+#define EXPOSED_CHEST_LAYER		20.25
 #define RING_LAYER				20
 #define GLASSES_LAYER			19
 #define NECK_LAYER				18

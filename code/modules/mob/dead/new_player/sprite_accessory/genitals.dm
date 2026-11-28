@@ -403,6 +403,10 @@
 	return "[icon_state]_[size]"
 
 /datum/sprite_accessory/breasts/adjust_appearance_list(list/appearance_list, obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
+	// Keep the ADJ sprite state and leave the rear artwork behind the body.
+	for(var/mutable_appearance/chest as anything in appearance_list)
+		if(chest.layer == -BODY_ADJ_LAYER)
+			chest.layer = -EXPOSED_CHEST_LAYER
 	generic_gender_feature_adjust(appearance_list, organ, bodypart, owner, OFFSET_BREASTS, OFFSET_BREASTS_F)
 
 /datum/sprite_accessory/breasts/is_visible(obj/item/organ/organ, obj/item/bodypart/bodypart, mob/living/carbon/owner)
