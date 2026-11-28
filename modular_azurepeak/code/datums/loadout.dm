@@ -177,6 +177,12 @@ GLOBAL_LIST_INIT(loadout_items, init_loadout_items())
 	path = /obj/item/storage/keyring
 	triumph_cost = 2
 
+/datum/loadout_item/serfstone
+	name = "Serfstone"
+	path = /obj/item/scomstone/bad
+	sort_category = "Tools"
+	triumph_cost = 2
+
 /datum/loadout_item/wooden_bowl
 	name = "bowl"
 	path = /obj/item/reagent_containers/glass/bowl
